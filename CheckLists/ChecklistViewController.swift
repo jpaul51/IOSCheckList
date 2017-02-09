@@ -33,23 +33,25 @@ class ChecklistViewController: UITableViewController {
         }
        
     }
+  
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "AddItem"
-            
+        if segue.identifier == "AddItem" || segue.identifier == "EditItem",
+         let navigationController = segue.destination as? UINavigationController,
+         let addItemViewController = navigationController.topViewController as? AddItemTableViewController
         {
+             addItemViewController.delegate = self
             
-            let navigationController = segue.destination as? UINavigationController
-            let addItemViewController = navigationController?.topViewController as? AddItemTableViewController
-            if let viewController = addItemViewController {
-                viewController.deleguate = self
+            if segue.identifier == "EditItem"
+            {
+                addItemViewController.itemToEdit = checklistItems[(tableView.indexPath(for: sender as! UITableViewCell)?.row)!]
             }
+            
         }
         
-        else if segue.identifier == "EditItem"
-        {
-            print("-------------EDIT-------------");
-        }
+      
+        
     }
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         tableView.beginUpdates()
         tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.top)
@@ -80,6 +82,7 @@ class ChecklistViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistItem", for: indexPath) as UITableViewCell
         //cell.viewWithTag(0)
         cell.viewWithTag(1)
+        
         configureCheckmarkFor(cell:cell,withItem:checklistItems[indexPath.row]);
         configureTextFor(cell:cell,withItem:checklistItems[indexPath.row]);
        
@@ -142,6 +145,15 @@ extension ChecklistViewController: AddItemViewControllerDelegate
         self.dismiss(animated: true, completion: nil)
 
             }
+    func addItemViewController(controller: AddItemTableViewController, didFinishEditingItem item: ChecklistItem)
+    {
+        print("----------------------EDIT place----------------------")
+        let index = checklistItems.index(where:{ $0 === item })!
+         checklistItems[index] = item
+        tableView.reloadRows(at:[IndexPath(row:index, section:0)], with: UITableViewRowAnimation.top)
+        self.dismiss(animated: true, completion: nil)
+
+    }
 }
 
 
