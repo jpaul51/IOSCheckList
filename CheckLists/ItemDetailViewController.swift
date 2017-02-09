@@ -8,15 +8,15 @@
 //J'en suis à la 35...
 
 import UIKit
-protocol ItemDetailViewControllerDelegate : class {
-    func addItemViewControllerDidCancel(controller: ItemDetailViewController)
-    func addItemViewController(controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem)
-    func addItemViewController(controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem)
+protocol ItemDetailViewController(ler(Delegate : cla)
+    func addItemViewControllerDidCancel(controller: AddItemTableViewController)
+    func addItemViewController(controller: AddItemTableViewController, didFinishAddingItem item: ChecklistItem)
+    func addItemViewController(controller: AddItemTableViewController, didFinishEditingItem item: ChecklistItem)
 }
 
 
-class ItemDetailViewController: UITableViewController {
-    var delegate : ItemDetailViewControllerDelegate?;
+class AddItemTableViewController: UITableViewController {
+    var delegate : ItemDetailViewController(ntroller(D)
     var itemToEdit: ChecklistItem?
     var isEditingItem: Bool?;
     

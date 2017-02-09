@@ -37,7 +37,7 @@ class ChecklistViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "AddItem" || segue.identifier == "EditItem",
          let navigationController = segue.destination as? UINavigationController,
-         let addItemViewController = navigationController.topViewController as? AddItemTableViewController
+         let addItemViewController = navigationController.topViewController as? ItemDetailViewController
         {
              addItemViewController.delegate = self
             
@@ -121,13 +121,13 @@ class ChecklistViewController: UITableViewController {
   
 
 }
-extension ChecklistViewController: AddItemViewControllerDelegate
+extension ChecklistViewController: ItemDetailViewControllerDelegate
 {
-    func addItemViewControllerDidCancel(controller: AddItemTableViewController)
+    func addItemViewControllerDidCancel(controller: ItemDetailViewController)
     {
         print("CANCEL");
     }
-    func addItemViewController(controller: AddItemTableViewController, didFinishAddingItem item: ChecklistItem)
+    func addItemViewController(controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem)
     {//C'est ici que ça plante !!!!!!!
         print("----------------------We are here----------------------");
         
@@ -145,7 +145,7 @@ extension ChecklistViewController: AddItemViewControllerDelegate
         self.dismiss(animated: true, completion: nil)
 
             }
-    func addItemViewController(controller: AddItemTableViewController, didFinishEditingItem item: ChecklistItem)
+    func addItemViewController(controller: ItemDetailViewController, didFinishEditingItem item: ChecklistItem)
     {
         print("----------------------EDIT place----------------------")
         let index = checklistItems.index(where:{ $0 === item })!
