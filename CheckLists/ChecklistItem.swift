@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ChecklistItem {
+class ChecklistItem : NSObject, NSCoding {
 
     
     var text = String();
@@ -16,7 +16,7 @@ class ChecklistItem {
     
     
     
-    init(){
+    override init(){
         
     }
     
@@ -36,7 +36,27 @@ class ChecklistItem {
     }
   
     
+    // MARK: NSCoding
     
+    required convenience init?(coder decoder: NSCoder) {
+        guard let text = decoder.decodeObject(forKey: "text") as? String,
+            let checked = decoder.decodeBool(forKey: "checked") as? Bool
+            else { return nil }
+        
+        self.init(
+            text: text,
+            checked
+        )
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(self.text, forKey: "text")
+        coder.encode(self.checked, forKey: "checked")
+    }
+    
+     static  func == (lhs: ChecklistItem, rhs: ChecklistItem) -> Bool {
+      return (lhs.text == rhs.text)
+    }
 
     /*
     // MARK: - Navigation

@@ -17,9 +17,9 @@ class ChecklistViewController: UITableViewController {
         override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-       
-        
-        for index in 0...4 {
+            checklistItems=[ChecklistItem]();
+            checklistItems = NSKeyedUnarchiver.unarchiveObject(withFile: dataFileUrl().absoluteString) as? [ChecklistItem] ?? [ChecklistItem]()
+        /*for index in 0...4 {
             if(index%2==0)
             {
                 checklistItems.append( ChecklistItem(text: "hello"+String(index)));
@@ -30,7 +30,8 @@ class ChecklistViewController: UITableViewController {
                 
             }
             currentRowIndex+=1;
-        }
+
+        } */
        
     }
   
@@ -45,7 +46,7 @@ class ChecklistViewController: UITableViewController {
             {
                 addItemViewController.itemToEdit = checklistItems[(tableView.indexPath(for: sender as! UITableViewCell)?.row)!]
             }
-            
+            saveChecklistItems()
         }
         
       
@@ -116,10 +117,39 @@ class ChecklistViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         checklistItems[indexPath.row].toogleChecked()
         tableView.reloadRows(at:[indexPath], with: UITableViewRowAnimation.top)
+        
+       
+        saveChecklistItems()
     }
     
   
+    
+    func documentDirectory() -> URL {
+        print("------------------DIRECTORY------------------");
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
 
+        let url = URL.init(fileURLWithPath: documentsPath)
+        print(url);
+        return url
+    }
+    
+    func dataFileUrl() -> URL {
+       
+        var url = documentDirectory()
+        url.appendPathComponent("Ckecklists.plist" );
+        
+        print(url);
+
+        return url
+    }
+
+    func saveChecklistItems() {
+        print("-------------------SAVE-------------------");
+        print("save file:"+dataFileUrl().absoluteString);
+        let file = NSKeyedArchiver.archiveRootObject(checklistItems, toFile: dataFileUrl().absoluteString)
+        
+        
+    }
 }
 extension ChecklistViewController: ItemDetailViewControllerDelegate
 {
@@ -128,7 +158,7 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate
         print("CANCEL");
     }
     func addItemViewController(controller: ItemDetailViewController, didFinishAddingItem item: ChecklistItem)
-    {//C'est ici que ça plante !!!!!!!
+    {
         print("----------------------We are here----------------------");
         
        
@@ -141,7 +171,7 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate
         
         //tableView.endUpdates()
         currentRowIndex+=1;
-       
+       saveChecklistItems()
         self.dismiss(animated: true, completion: nil)
 
             }
@@ -151,9 +181,12 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate
         let index = checklistItems.index(where:{ $0 === item })!
          checklistItems[index] = item
         tableView.reloadRows(at:[IndexPath(row:index, section:0)], with: UITableViewRowAnimation.top)
+        saveChecklistItems()
         self.dismiss(animated: true, completion: nil)
 
     }
+    
+   
 }
 
 
