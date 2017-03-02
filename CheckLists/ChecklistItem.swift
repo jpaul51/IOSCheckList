@@ -40,7 +40,7 @@ class ChecklistItem : NSObject, NSCoding {
     
     required convenience init?(coder decoder: NSCoder) {
         guard let text = decoder.decodeObject(forKey: "text") as? String,
-            let checked = decoder.decodeBool(forKey: "checked") as? Bool
+            let checked = decoder.decodeBool(forKey: "checked") as?	 Bool
             else { return nil }
         
         self.init(

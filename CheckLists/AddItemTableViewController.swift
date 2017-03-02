@@ -5,7 +5,8 @@
 //  Created by iem on 02/02/2017.
 //  Copyright © 2017 iem. All rights reserved.
 //
-//J'en suis à la 35...
+//J'en suis à la 53... IL FAUT FAIRE LES LIENDS DANS LE STORYBOARD
+
 
 import UIKit
 protocol ItemDetailViewControllerDelegate : class {

@@ -8,17 +8,39 @@
 
 import UIKit
 
+protocol ChecklistViewControllerDelegate: class {
+    func listDetailViewControllerDidCancel(controller: ChecklistViewController)
+    
+    func listDetailViewController(controller: ChecklistViewController, didFinishAddingChecklist checklist: Checklist)
+    
+    func listDetailViewController(controller: ChecklistViewController, didFinishEditingChecklist checklist: Checklist)
+}
+
 class ChecklistViewController: UITableViewController {
 
-    var checklistItems=[ChecklistItem]();
+    var checklistItems=[ChecklistItem]()
+    var list : Checklist!
     var currentRowIndex=0;
+    var delegate :ChecklistViewControllerDelegate?
     
+    @IBOutlet weak var navBar: UINavigationItem!
     
         override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+            
+            navBar.title = list.name
             checklistItems=[ChecklistItem]();
-            checklistItems = NSKeyedUnarchiver.unarchiveObject(withFile: dataFileUrl().absoluteString) as? [ChecklistItem] ?? [ChecklistItem]()
+            print("LOAD");
+            loadChecklists();
+            if(checklistItems.count>0){
+                print("content: " + checklistItems[0].text);
+            }
+            else
+            {
+                print("EMPTY");
+            }
+            
         /*for index in 0...4 {
             if(index%2==0)
             {
@@ -124,33 +146,42 @@ class ChecklistViewController: UITableViewController {
     
   
     
-    func documentDirectory() -> URL {
-        print("------------------DIRECTORY------------------");
-        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-
-        let url = URL.init(fileURLWithPath: documentsPath)
-        print(url);
-        return url
+    func documentsDirectory() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as! [String]
+        return paths[0]
     }
     
-    func dataFileUrl() -> URL {
-       
-        var url = documentDirectory()
-        url.appendPathComponent("Ckecklists.plist" );
-        
-        print(url);
-
-        return url
+    func dataFilePath() -> String {
+        return documentsDirectory().appending("Checklists.plist")
     }
-
+    
     func saveChecklistItems() {
-        print("-------------------SAVE-------------------");
-        print("save file:"+dataFileUrl().absoluteString);
-        let file = NSKeyedArchiver.archiveRootObject(checklistItems, toFile: dataFileUrl().absoluteString)
-        
-        
+        let data = NSMutableData()
+        let archiver = NSKeyedArchiver(forWritingWith: data)
+        archiver.encode(checklistItems, forKey: "Checklists")
+        archiver.finishEncoding()
+        print("PATH: ")
+        print(dataFilePath())
+        data.write(toFile: dataFilePath(), atomically: true)
+    }
+    
+    func loadChecklists() {
+        let path = dataFilePath()
+        if FileManager.default.fileExists(atPath: path) {
+            if let data = NSData(contentsOfFile: path) {
+                let unarchiver = NSKeyedUnarchiver(forReadingWith: data as Data)
+                checklistItems = unarchiver.decodeObject(forKey: "Checklists") as! [ChecklistItem]
+                unarchiver.finishDecoding()
+               // sortChecklists()
+            }
+        }
     }
 }
+
+
+
+
+
 extension ChecklistViewController: ItemDetailViewControllerDelegate
 {
     func addItemViewControllerDidCancel(controller: ItemDetailViewController)
